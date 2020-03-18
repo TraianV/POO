@@ -1,0 +1,253 @@
+#include<iostream>
+using namespace std;
+class vector
+{
+    int *v, n;
+public:
+    friend class vectori_de_vectori;
+    int get_n(){return n;}
+    int * get_v(){return v;}
+
+    vector(int n,int *x)///initializare cu numere
+    {
+        this->n=n;
+        v=new int [n];
+        for(int i=0;i<n;i++)
+            v[i]=x[i];
+    }
+    vector()
+    {
+        n=0;
+    }
+    vector(vector &ob)
+    {
+        int i;
+        n=ob.n;
+        for(i=0;i<n;i++)
+            v[i]=ob.v[i];
+    }
+
+    int &operator[](int n)
+    {
+        return v[n];
+    }
+
+    void operator =(vector &ob)
+    {
+        int i;
+        for(i=0;i<ob.n;i++)
+            v[i]=ob.v[i];
+        n=ob.n;
+    }
+
+    vector(const vector &vec)///constructor de copiere
+    {
+        n=vec.n;
+        v=new int[vec.n];
+        for(int i=0; i<n; i++)
+            v[i]=vec.v[i];
+    }
+
+
+    ~vector()
+    {
+        delete[]v;
+        n=0;
+    }
+
+
+    friend istream & operator>>(istream &cin , vector & vec);
+    friend ostream & operator<<(ostream &cout,vector &vec);
+
+
+};
+
+
+istream & operator>>(istream &cin , vector & vec)
+{
+    cin>>vec.n;
+    vec.v=new int[vec.n];
+    for(int i=0;i<vec.n;i++)
+        cin>>vec.v[i];
+    return cin;
+}
+
+
+ostream & operator<<(ostream &cout,vector &vec)
+{
+    for (int i=0;i<vec.n;i++)
+        cout<<vec.v[i]<<' ';
+    return cout;
+}
+
+
+class vectori_de_vectori
+{
+    friend class vector;///prietena clasei vector
+    int n;
+    vector *vdv;
+
+
+public:
+    void setter(int y){n=y;}
+    int geter(){return n;}
+
+
+    friend istream & operator>>(istream &cin , vectori_de_vectori & vec);
+    friend ostream & operator<<(ostream &cout,vectori_de_vectori &vec);
+
+
+    vectori_de_vectori(){n=1;}
+    vectori_de_vectori(int val)///constructor de initializare cu o valoare
+    {
+        int i,j,nr_elem;
+        cout<<"Scrieti numarul de vectori :";
+        cin>>n;
+        this->n=n;
+        this->vdv=new vector[n];
+        for(i=0;i<n;i++)
+            {
+                cout<<"Numarul de componente din vectorul "<<i+1<<" :";
+                cin>>nr_elem;
+                vdv[i].v=new int[nr_elem];
+                this->vdv[i].n=nr_elem;
+                for(j=0;j<nr_elem;j++)
+                    vdv[i].v[j]=val;
+            }
+    }
+
+    void operator =(vectori_de_vectori const &ob)
+    {
+        int i;
+        n=ob.n;
+        for(i=0;i<ob.n;i++)
+            vdv[i]=ob.vdv[i];
+    }
+    vectori_de_vectori(const vectori_de_vectori &ob)
+    {
+        int i;
+        n=ob.n;
+        vdv=new vector[n];
+        for(i=0;i<n;i++)
+            vdv[i]=ob.vdv[i];
+    }///constructor de copiere
+
+    ~vectori_de_vectori()
+    {
+        n=0;
+        delete [] vdv;
+    }///destructor(daca e cazul-alocare statica se seteaza vectorul cu 0, alocare dinamica= dezalocare zona de memorie)
+
+
+    int** tomatrix(int &n,int &m)
+    {
+        int i,max=0,j;
+        for(i=0;i<this->n;i++)
+            if(this->vdv[i].n>max)
+                    max=this->vdv[i].n;
+        int** a;
+        a=new int*[this->n];
+        for(i=0;i<this->n;i++)
+            {
+                a[i]=new int[max];
+                for(j=0;j<max;j++)
+                        a[i][j]=0;
+            }
+        for(i=0;i<this->n;i++)
+            {
+                for(j=0;j<this->vdv[i].n;j++)
+                    a[i][j]=this->vdv[i].v[j];
+            }
+        n=this->n;
+        m=max;
+        return a;
+    }///metoda publica prin care se creeaza o matrice de numere intregi cu nr linii=dim si nr coloane=max dim vectorilor declarati, elementele sunt valorile vectorilor,adaugandu-se 0-uri
+
+    int** operator +(vectori_de_vectori &ob)
+    {
+        int i,j,x,y,s,t,cmax,lmax;
+        int **a=this->tomatrix(x,y),**b = ob.tomatrix(s,t), **rez;
+        if(x<s)
+                lmax=s;
+        else
+                lmax=x;
+        if(y<t)
+                cmax=t;
+        else
+                cmax=y;
+        i=j=0;
+        rez=new int*[lmax];
+        for(i=0;i<lmax;i++)
+        {
+            rez[i]=new int[cmax];
+            for(j=0;j<cmax;j++)
+                rez[i][j]=0;
+        }
+        i=j=0;
+        for(i=0;i<x;i++)
+            for(j=0;j<y;j++)
+                rez[i][j]+=a[i][j];
+        for(i=0;i<s;i++)
+            for(j=0;j<t;j++)
+                rez[i][j]+=b[i][j];
+        cout<<"Matricea rezultata este: \n";
+        for(i=0;i<lmax;i++)///afisarea matricei rezultate
+            {
+                for(j=0;j<cmax;j++)
+                    cout<<rez[i][j]<<' ';
+                cout<<endl;
+            }
+        return rez;
+    }///suma a 2 obiecte de tip vector realizate prin suprrainarcarea operatorului +
+
+
+};
+
+istream & operator>>(istream &cin, vectori_de_vectori & vec)///supraincaracre operator >>
+{
+    int i;
+    cout<<"Scrieti numarul de vectori :";
+    cin>>vec.n;
+    vec.vdv=new vector[vec.n];
+    for(i=0;i<vec.n;i++)
+    {
+        cout<<"Numarul de componente din vectorul "<<i+1<<" :";
+        cin>>vec.vdv[i];
+    }
+    return cin;
+}
+
+
+ostream & operator<<(ostream &cout, vectori_de_vectori &vec)///supraincaracare operator <<
+{
+   int i;
+   cout<<"Vectorul de vectori este:\n";
+   for(i=0;i<vec.n;i++)
+        cout<<vec.vdv[i]<<endl;
+    return cout;
+}
+
+
+int main()
+{
+    int i,j,**a,n,m;
+    cout<<"Alocarea cu o singura valoare si afisare:\nScrieti valoarea: ";
+    cin>>i;
+    vectori_de_vectori v(i);
+    cout<<v;
+    cout<<"Citirea de la tastatura a unui vector de vector si afisarea acestuia\n";
+    vectori_de_vectori w;
+    cin>>w;
+    cout<<w;
+    cout<<"Transformarea unui vector de vectori intr-o matrice se afisarea ei\n";
+    a=w.tomatrix(n,m);
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<m;j++)
+            cout<<a[i][j]<<' ';
+        cout<<endl;
+    }
+    cout<<"Suma a doi vectori de vectori\n";
+    a=v+w;
+    return 0;
+}
