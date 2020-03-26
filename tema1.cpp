@@ -32,6 +32,8 @@ public:
     vector& operator =(vector &ob)///am nevoie si de aceasta metoda de copiere pentru a copia element cu element
     {
         int i;
+        if(this==&ob)
+            return *this;
         if (this->n==0)
             delete []this->v;
         this->n=ob.n;
@@ -130,6 +132,8 @@ public:
     vectori_de_vectori& operator =(vectori_de_vectori const &ob)
     {
         int i;
+        if(this==&ob)
+            return *this;
         for(i=0; i<this->n; i++)
             if(this->vdv[i].n>0)
                 delete []this->vdv[i].v;
@@ -256,7 +260,7 @@ ostream & operator<<(ostream &out, vectori_de_vectori &vec)///supraincaracare op
 
 int main()
 {
-    int i,j,**a,n,m,lmax,cmax;
+    int i,j,**a,n,m,lmax,cmax,**b;
     cout<<"Alocarea cu o singura valoare si afisare:\nScrieti valoarea: ";
     cin>>i;
     vectori_de_vectori v(i);
@@ -285,19 +289,16 @@ int main()
         cmax=w.max();
     else
         cmax=v.max();
-    a=new int*[lmax+1];
-    for(i=0; i<lmax; i++)
-        a[i]=new int[cmax+1];
-    a=v+w;
+    b=v+w;
     cout<<"Matricea rezultata este: \n";
     for(i=0; i<lmax; i++) ///afisarea matricei rezultate
     {
         for(j=0; j<cmax; j++)
-            cout<<a[i][j]<<' ';
+            cout<<b[i][j]<<' ';
         cout<<endl;
     }
     for(i=0; i<lmax; i++)
-        delete []a[i];
-    delete []a;
+        delete []b[i];
+    delete []b;
     return 0;
 }
