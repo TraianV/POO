@@ -21,5 +21,4 @@ jobs:
       run:
         cppcheck --enable=all .
     - name: valgrind
-      run:
-    valgrind -v --leak-check=full --show-leak-kinds=all --track-origins=yes ./main
+      run: valgrind -v --leak-check=full --show-leak-kinds=all --track-origins=yes ./main
