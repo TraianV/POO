@@ -16,7 +16,9 @@ jobs:
     - name: dependencies
       run:
         sudo apt-get install -y valgrind cppcheck g++-9 cmake
-    - name: g++-9 -Wall -Wextra -pedantic -std=c++17 tema1.cpp -o main -g
+    -name: make
+      run:
+      g++-9 -Wall -Wextra -pedantic -std=c++17 tema1.cpp -o main -g
     - name: cppcheck
       run:
         cppcheck --enable=all .
